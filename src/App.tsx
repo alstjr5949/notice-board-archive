@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useNavigate } from "react-router-dom";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const navigate = useNavigate();
+
+  const handleBoardListClick = (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>
+  ) => {
+    navigate(`/report/${parseInt(e.currentTarget.innerText)}`);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <header>
+        <h1 className="title">Notice Board Archive</h1>
+      </header>
+      <main>
+        <ul className="board-list-section">
+          <li onClick={handleBoardListClick}>1</li>
+          <li onClick={handleBoardListClick}>2</li>
+          <li onClick={handleBoardListClick}>3</li>
+          <li onClick={handleBoardListClick}>4</li>
+          <li onClick={handleBoardListClick}>5</li>
+          <li onClick={handleBoardListClick}>6</li>
+          <li onClick={handleBoardListClick}>7</li>
+          <li onClick={handleBoardListClick}>8</li>
+          <li onClick={handleBoardListClick}>9</li>
+          <li onClick={handleBoardListClick}>10</li>
+          <li onClick={handleBoardListClick}>11</li>
+          <li onClick={handleBoardListClick}>12</li>
+        </ul>
+      </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
