@@ -1,6 +1,7 @@
 import PageTemplate from "../temp/PageTemplate";
 
 import styles from "./Report1.module.css";
+import { reportListDummy } from "./data";
 
 const Report1 = () => {
   return (
@@ -34,20 +35,17 @@ const Report1 = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className={styles["table-row"]}>
-                <td>1</td>
-                <td>문학</td>
-                <td>4월 11일 신간 리스트</td>
-                <td>2024-04-11</td>
-                <td>2</td>
-              </tr>
-              <tr className={styles["table-row"]}>
-                <td>1</td>
-                <td>문학</td>
-                <td>4월 11일 신간 리스트</td>
-                <td>2024-04-11</td>
-                <td>2</td>
-              </tr>
+              {reportListDummy.map(
+                ({ id, index, category, title, createdTime, like }) => (
+                  <tr key={id} className={styles["table-row"]}>
+                    <td>{index}</td>
+                    <td>{category}</td>
+                    <td>{title}</td>
+                    <td>{createdTime}</td>
+                    <td>{like}</td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </main>
