@@ -7,19 +7,19 @@ const Report1 = () => {
   return (
     <PageTemplate>
       <div className={styles["report-wrapper"]}>
-        <header>
-          <h1>Report 1</h1>
-          <nav>
-            <ul>
-              <li>전체</li>
-              <li>문학</li>
-              <li>경제경영</li>
-              <li>자기계발</li>
-              <li>경영혁신</li>
-              <li>컴퓨터</li>
-              <li>소설</li>
-              <li>예술</li>
-              <li>건강</li>
+        <header className={styles["report-header"]}>
+          <h1 className={styles["report-title"]}>Report 1</h1>
+          <nav className={styles["report-nav"]}>
+            <ul className={styles["report-list-wrapper"]}>
+              <li className={styles["report-list"]}>전체</li>
+              <li className={styles["report-list"]}>문학</li>
+              <li className={styles["report-list"]}>경제경영</li>
+              <li className={styles["report-list"]}>자기계발</li>
+              <li className={styles["report-list"]}>경영혁신</li>
+              <li className={styles["report-list"]}>컴퓨터</li>
+              <li className={styles["report-list"]}>소설</li>
+              <li className={styles["report-list"]}>예술</li>
+              <li className={styles["report-list"]}>건강</li>
             </ul>
           </nav>
         </header>
@@ -49,8 +49,8 @@ const Report1 = () => {
             </tbody>
           </table>
         </main>
-        <footer>
-          <button>글쓰기</button>
+        <footer className={styles["report-footer"]}>
+          <button className={styles["report-create-button"]}>글쓰기</button>
         </footer>
       </div>
     </PageTemplate>
