@@ -1,9 +1,30 @@
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import PageTemplate from "../temp/PageTemplate";
 
 import styles from "./Report1.module.css";
 import { reportListDummy } from "./data";
+import { db } from "../firebase";
+
+const categories = [
+  "전체",
+  "문학",
+  "경제경영",
+  "자기계발",
+  "경영혁신",
+  "컴퓨터",
+  "소설",
+  "예술",
+  "건강",
+];
 
 const Report1 = () => {
+  const handleWritingButtonClick = async () => {
+    const boardQuery = query(collection(db, "board"), orderBy("createdTime"));
+    const snapshot = await getDocs(boardQuery);
+
+    console.log(snapshot.docs.map((doc) => doc.data()));
+  };
+
   return (
     <PageTemplate>
       <div className={styles["report-wrapper"]}>
@@ -11,15 +32,11 @@ const Report1 = () => {
           <h1 className={styles["report-title"]}>Report 1</h1>
           <nav className={styles["report-nav"]}>
             <ul className={styles["report-list-wrapper"]}>
-              <li className={styles["report-list"]}>전체</li>
-              <li className={styles["report-list"]}>문학</li>
-              <li className={styles["report-list"]}>경제경영</li>
-              <li className={styles["report-list"]}>자기계발</li>
-              <li className={styles["report-list"]}>경영혁신</li>
-              <li className={styles["report-list"]}>컴퓨터</li>
-              <li className={styles["report-list"]}>소설</li>
-              <li className={styles["report-list"]}>예술</li>
-              <li className={styles["report-list"]}>건강</li>
+              {categories.map((category) => (
+                <li key={category} className={styles["report-list"]}>
+                  {category}
+                </li>
+              ))}
             </ul>
           </nav>
         </header>
@@ -50,7 +67,12 @@ const Report1 = () => {
           </table>
         </main>
         <footer className={styles["report-footer"]}>
-          <button className={styles["report-create-button"]}>글쓰기</button>
+          <button
+            onClick={handleWritingButtonClick}
+            className={styles["report-create-button"]}
+          >
+            글쓰기
+          </button>
         </footer>
       </div>
     </PageTemplate>

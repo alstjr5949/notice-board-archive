@@ -21,7 +21,7 @@
 
         .report-list {
           padding: 0 0.4rem;
-          border-bottom: 3px solid #7fd9fa;
+          /* border-bottom: 3px solid #7fd9fa; */
         }
       }
     }
