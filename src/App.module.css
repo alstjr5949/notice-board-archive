@@ -1,4 +1,4 @@
-header {
+.header {
   display: flex;
   justify-content: center;
   padding-top: 2rem;
@@ -8,7 +8,7 @@ header {
   }
 }
 
-main {
+.main {
   width: 100vw;
   display: flex;
   flex-direction: column;

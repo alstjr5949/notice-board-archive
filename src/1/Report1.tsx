@@ -2,8 +2,8 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import PageTemplate from "../temp/PageTemplate";
 
 import styles from "./Report1.module.css";
-import { reportListDummy } from "./data";
 import { db } from "../firebase";
+import { useEffect, useState } from "react";
 
 const categories = [
   "전체",
@@ -17,13 +17,49 @@ const categories = [
   "건강",
 ];
 
-const Report1 = () => {
-  const handleWritingButtonClick = async () => {
-    const boardQuery = query(collection(db, "board"), orderBy("createdTime"));
-    const snapshot = await getDocs(boardQuery);
+interface IPosts {
+  id: string;
+  category: string;
+  title: string;
+  createdTime: Date;
+  like: number;
+}
 
-    console.log(snapshot.docs.map((doc) => doc.data()));
+const Report1 = () => {
+  const [posts, setPosts] = useState<IPosts[]>([]);
+  const [isCreatePostModalVisible, setIsCreatePostModalVisible] =
+    useState(false);
+
+  const handleCreatePostButtonClick = () => {
+    setIsCreatePostModalVisible((prev) => !prev);
   };
+
+  const handleCancelCreateButtonClick = () => {
+    setIsCreatePostModalVisible(false);
+  };
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const boardQuery = query(collection(db, "board"), orderBy("createdTime"));
+      const snapshot = await getDocs(boardQuery);
+
+      const posts = snapshot.docs.map((doc) => {
+        const { category, title, createdTime, like } = doc.data();
+
+        return {
+          id: doc.id,
+          category,
+          title,
+          createdTime,
+          like,
+        };
+      });
+
+      setPosts(posts);
+    };
+
+    getPosts();
+  }, []);
 
   return (
     <PageTemplate>
@@ -52,13 +88,13 @@ const Report1 = () => {
               </tr>
             </thead>
             <tbody>
-              {reportListDummy.map(
-                ({ id, index, category, title, createdTime, like }) => (
+              {posts.map(
+                ({ id, category, title, createdTime, like }, index) => (
                   <tr key={id} className={styles["table-row"]}>
-                    <td>{index}</td>
+                    <td>{index + 1}</td>
                     <td>{category}</td>
                     <td>{title}</td>
-                    <td>{createdTime}</td>
+                    <td>{`${createdTime}`}</td>
                     <td>{like}</td>
                   </tr>
                 )
@@ -68,12 +104,55 @@ const Report1 = () => {
         </main>
         <footer className={styles["report-footer"]}>
           <button
-            onClick={handleWritingButtonClick}
-            className={styles["report-create-button"]}
+            onClick={handleCreatePostButtonClick}
+            className={styles["post-create-button"]}
           >
             글쓰기
           </button>
         </footer>
+        {isCreatePostModalVisible && (
+          <div className={styles["post-create-modal"]}>
+            <form className={styles["post-create-form"]}>
+              <header>
+                <h1 className={styles["modal-title"]}>글쓰기</h1>
+              </header>
+              <main>
+                <label htmlFor="title-input">제목</label>
+                <input
+                  id="title-input"
+                  className={styles["title-input"]}
+                  type="text"
+                  placeholder="제목을 입력하세요"
+                />
+                <label htmlFor="category">카테고리</label>
+                <select id="category">
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <label htmlFor="contents">내용</label>
+                <textarea
+                  name="contents"
+                  id="contents"
+                  placeholder="게시글을 입력하세요"
+                  maxLength={150}
+                  cols={30}
+                  rows={10}
+                />
+              </main>
+              <footer>
+                <div className={styles["button-wrapper"]}>
+                  <button onClick={handleCancelCreateButtonClick}>취소</button>
+                  <button className={styles["submit-button"]} type="submit">
+                    완료
+                  </button>
+                </div>
+              </footer>
+            </form>
+          </div>
+        )}
       </div>
     </PageTemplate>
   );

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "./App.css";
+import styles from "./App.module.css";
 
 function App() {
   const navigate = useNavigate();
@@ -12,11 +12,11 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1 className="title">Notice Board Archive</h1>
+      <header className={styles["header"]}>
+        <h1 className={styles["title"]}>Notice Board Archive</h1>
       </header>
-      <main>
-        <ul className="board-list-section">
+      <main className={styles["main"]}>
+        <ul className={styles["board-list-section"]}>
           <li onClick={handleBoardListClick}>1</li>
           <li onClick={handleBoardListClick}>2</li>
           <li onClick={handleBoardListClick}>3</li>
