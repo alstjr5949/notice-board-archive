@@ -1,4 +1,11 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  Timestamp,
+  addDoc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import PageTemplate from "../temp/PageTemplate";
 
 import styles from "./Report1.module.css";
@@ -21,14 +28,18 @@ interface IPosts {
   id: string;
   category: string;
   title: string;
-  createdTime: Date;
+  createdTime: Timestamp;
   like: number;
 }
 
 const Report1 = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [isCreatePostModalVisible, setIsCreatePostModalVisible] =
     useState(false);
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
+  const [category, setCategory] = useState("문학");
 
   const handleCreatePostButtonClick = () => {
     setIsCreatePostModalVisible((prev) => !prev);
@@ -38,9 +49,48 @@ const Report1 = () => {
     setIsCreatePostModalVisible(false);
   };
 
+  const handlePostTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPostTitle(e.target.value);
+  };
+
+  const handlePostCategoryChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setCategory(e.target.value);
+  };
+
+  const handlePostContentChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setPostContent(e.target.value);
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isLoading || !postTitle || !postContent) return;
+
+    try {
+      setIsLoading(true);
+
+      await addDoc(collection(db, "posts"), {
+        title: postTitle,
+        content: postContent,
+        category,
+        createdTime: new Date(),
+        like: 0,
+      });
+
+      setIsCreatePostModalVisible(false);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const getPosts = async () => {
-      const boardQuery = query(collection(db, "board"), orderBy("createdTime"));
+      const boardQuery = query(collection(db, "posts"), orderBy("createdTime"));
       const snapshot = await getDocs(boardQuery);
 
       const posts = snapshot.docs.map((doc) => {
@@ -60,6 +110,8 @@ const Report1 = () => {
 
     getPosts();
   }, []);
+
+  const categoriesFilteredAll = categories.slice(1);
 
   return (
     <PageTemplate>
@@ -94,7 +146,9 @@ const Report1 = () => {
                     <td>{index + 1}</td>
                     <td>{category}</td>
                     <td>{title}</td>
-                    <td>{`${createdTime}`}</td>
+                    <td>{`${new Date(
+                      createdTime.seconds * 1000
+                    ).toLocaleDateString("ko")}`}</td>
                     <td>{like}</td>
                   </tr>
                 )
@@ -112,7 +166,10 @@ const Report1 = () => {
         </footer>
         {isCreatePostModalVisible && (
           <div className={styles["post-create-modal"]}>
-            <form className={styles["post-create-form"]}>
+            <form
+              className={styles["post-create-form"]}
+              onSubmit={handleFormSubmit}
+            >
               <header>
                 <h1 className={styles["modal-title"]}>글쓰기</h1>
               </header>
@@ -123,10 +180,12 @@ const Report1 = () => {
                   className={styles["title-input"]}
                   type="text"
                   placeholder="제목을 입력하세요"
+                  onChange={handlePostTitleChange}
+                  required
                 />
                 <label htmlFor="category">카테고리</label>
-                <select id="category">
-                  {categories.map((category) => (
+                <select id="category" onChange={handlePostCategoryChange}>
+                  {categoriesFilteredAll.map((category) => (
                     <option key={category} value={category}>
                       {category}
                     </option>
@@ -140,6 +199,8 @@ const Report1 = () => {
                   maxLength={150}
                   cols={30}
                   rows={10}
+                  onChange={handlePostContentChange}
+                  required
                 />
               </main>
               <footer>
