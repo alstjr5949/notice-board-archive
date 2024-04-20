@@ -2,7 +2,8 @@ import {
   Timestamp,
   addDoc,
   collection,
-  getDocs,
+  limit,
+  onSnapshot,
   orderBy,
   query,
 } from "firebase/firestore";
@@ -11,6 +12,7 @@ import PageTemplate from "../temp/PageTemplate";
 import styles from "./Report1.module.css";
 import { db } from "../firebase";
 import { useEffect, useState } from "react";
+import { Unsubscribe } from "firebase/database";
 
 const categories = [
   "전체",
@@ -89,26 +91,37 @@ const Report1 = () => {
   };
 
   useEffect(() => {
+    let unsubscribe: Unsubscribe | null = null;
+
     const getPosts = async () => {
-      const boardQuery = query(collection(db, "posts"), orderBy("createdTime"));
-      const snapshot = await getDocs(boardQuery);
+      const postQuery = query(
+        collection(db, "posts"),
+        orderBy("createdTime"),
+        limit(50)
+      );
 
-      const posts = snapshot.docs.map((doc) => {
-        const { category, title, createdTime, like } = doc.data();
+      unsubscribe = await onSnapshot(postQuery, (snapshot) => {
+        const posts = snapshot.docs.map((doc) => {
+          const { category, title, createdTime, like } = doc.data();
 
-        return {
-          id: doc.id,
-          category,
-          title,
-          createdTime,
-          like,
-        };
+          return {
+            id: doc.id,
+            category,
+            title,
+            createdTime,
+            like,
+          };
+        });
+
+        setPosts(posts);
       });
-
-      setPosts(posts);
     };
 
     getPosts();
+
+    return () => {
+      unsubscribe && unsubscribe();
+    };
   }, []);
 
   const categoriesFilteredAll = categories.slice(1);
