@@ -2,6 +2,8 @@ import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   limit,
   onSnapshot,
   orderBy,
@@ -26,22 +28,25 @@ const categories = [
   "건강",
 ];
 
-interface IPosts {
+interface IPost {
   id: string;
   category: string;
   title: string;
   createdTime: Timestamp;
   like: number;
+  content: string;
 }
 
 const Report1 = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [posts, setPosts] = useState<IPosts[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [isCreatePostModalVisible, setIsCreatePostModalVisible] =
     useState(false);
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
   const [category, setCategory] = useState("문학");
+  const [selectedPost, setSelectedPost] = useState<IPost>();
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleCreatePostButtonClick = () => {
     setIsCreatePostModalVisible((prev) => !prev);
@@ -90,19 +95,38 @@ const Report1 = () => {
     }
   };
 
+  const handlePostItemClick = (selectedPost: IPost) => {
+    setSelectedPost(selectedPost);
+  };
+
+  const handlePostDetailCancelButtonClick = () => {
+    setSelectedPost(undefined);
+  };
+
+  const handlePostDetailEditButtonClick = () => {
+    setIsEditMode(true);
+  };
+
+  const handlePostDetailDeleteButtonClick = () => {
+    if (!selectedPost) return;
+
+    deleteDoc(doc(db, "posts", selectedPost.id));
+    setSelectedPost(undefined);
+  };
+
   useEffect(() => {
     let unsubscribe: Unsubscribe | null = null;
 
     const getPosts = async () => {
       const postQuery = query(
         collection(db, "posts"),
-        orderBy("createdTime"),
+        orderBy("createdTime", "desc"),
         limit(50)
       );
 
       unsubscribe = await onSnapshot(postQuery, (snapshot) => {
         const posts = snapshot.docs.map((doc) => {
-          const { category, title, createdTime, like } = doc.data();
+          const { category, title, createdTime, like, content } = doc.data();
 
           return {
             id: doc.id,
@@ -110,6 +134,7 @@ const Report1 = () => {
             title,
             createdTime,
             like,
+            content,
           };
         });
 
@@ -153,19 +178,21 @@ const Report1 = () => {
               </tr>
             </thead>
             <tbody>
-              {posts.map(
-                ({ id, category, title, createdTime, like }, index) => (
-                  <tr key={id} className={styles["table-row"]}>
-                    <td>{index + 1}</td>
-                    <td>{category}</td>
-                    <td>{title}</td>
-                    <td>{`${new Date(
-                      createdTime.seconds * 1000
-                    ).toLocaleDateString("ko")}`}</td>
-                    <td>{like}</td>
-                  </tr>
-                )
-              )}
+              {posts.map((post, index) => (
+                <tr
+                  key={post.id}
+                  className={styles["table-row"]}
+                  onClick={() => handlePostItemClick(post)}
+                >
+                  <td>{index + 1}</td>
+                  <td>{post.category}</td>
+                  <td>{post.title}</td>
+                  <td>{`${new Date(
+                    post.createdTime.seconds * 1000
+                  ).toLocaleDateString("ko")}`}</td>
+                  <td>{post.like}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </main>
@@ -225,6 +252,46 @@ const Report1 = () => {
                 </div>
               </footer>
             </form>
+          </div>
+        )}
+        {selectedPost && (
+          <div className={styles["post-detail-modal"]}>
+            <header>
+              <h1 className={styles["selected-post-title"]}>
+                {selectedPost.title}
+              </h1>
+              <p className={styles["selected-post-category"]}>
+                {selectedPost.category}
+              </p>
+              <p className={styles["selected-post-created-time"]}>{`${new Date(
+                selectedPost.createdTime.seconds * 1000
+              ).toLocaleDateString("ko")}`}</p>
+            </header>
+            <main>
+              <div className={styles["selected-post-content"]}>
+                {selectedPost.content}
+              </div>
+            </main>
+            <footer>
+              <button
+                className={styles["cancel-button"]}
+                onClick={handlePostDetailCancelButtonClick}
+              >
+                취소
+              </button>
+              <button
+                className={styles["edit-button"]}
+                onClick={handlePostDetailEditButtonClick}
+              >
+                수정
+              </button>
+              <button
+                className={styles["delete-button"]}
+                onClick={handlePostDetailDeleteButtonClick}
+              >
+                삭제
+              </button>
+            </footer>
           </div>
         )}
       </div>
