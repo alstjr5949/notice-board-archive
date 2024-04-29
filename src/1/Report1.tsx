@@ -8,6 +8,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import PageTemplate from "../temp/PageTemplate";
 
@@ -47,6 +48,9 @@ const Report1 = () => {
   const [category, setCategory] = useState("문학");
   const [selectedPost, setSelectedPost] = useState<IPost>();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editContent, setEditContent] = useState("");
 
   const handleCreatePostButtonClick = () => {
     setIsCreatePostModalVisible((prev) => !prev);
@@ -74,6 +78,7 @@ const Report1 = () => {
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (isLoading || !postTitle || !postContent) return;
 
     try {
@@ -112,6 +117,50 @@ const Report1 = () => {
 
     deleteDoc(doc(db, "posts", selectedPost.id));
     setSelectedPost(undefined);
+  };
+
+  const handleEditModeCancelButtonClick = () => {
+    setIsEditMode(false);
+  };
+
+  const handleEditModeTitleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setEditTitle(e.target.value);
+  };
+
+  const handleEditModeCategorySelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setEditCategory(e.target.value);
+  };
+
+  const handleEditModeContentTextareaChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setEditContent(e.target.value);
+  };
+
+  const handleEditFormSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    selectedPost: IPost
+  ) => {
+    e.preventDefault();
+
+    try {
+      await updateDoc(doc(db, "posts", selectedPost.id), {
+        title: !editTitle ? selectedPost.title : editTitle,
+        category: !editCategory ? selectedPost.category : editCategory,
+        content: !editContent ? selectedPost.content : editContent,
+      });
+
+      setSelectedPost(undefined);
+      setIsEditMode(false);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      //
+    }
   };
 
   useEffect(() => {
@@ -256,42 +305,92 @@ const Report1 = () => {
         )}
         {selectedPost && (
           <div className={styles["post-detail-modal"]}>
-            <header>
-              <h1 className={styles["selected-post-title"]}>
-                {selectedPost.title}
-              </h1>
-              <p className={styles["selected-post-category"]}>
-                {selectedPost.category}
-              </p>
-              <p className={styles["selected-post-created-time"]}>{`${new Date(
-                selectedPost.createdTime.seconds * 1000
-              ).toLocaleDateString("ko")}`}</p>
-            </header>
-            <main>
-              <div className={styles["selected-post-content"]}>
-                {selectedPost.content}
-              </div>
-            </main>
-            <footer>
-              <button
-                className={styles["cancel-button"]}
-                onClick={handlePostDetailCancelButtonClick}
+            {isEditMode ? (
+              <form
+                className={styles["edit-form"]}
+                onSubmit={(e) => handleEditFormSubmit(e, selectedPost)}
               >
-                취소
-              </button>
-              <button
-                className={styles["edit-button"]}
-                onClick={handlePostDetailEditButtonClick}
-              >
-                수정
-              </button>
-              <button
-                className={styles["delete-button"]}
-                onClick={handlePostDetailDeleteButtonClick}
-              >
-                삭제
-              </button>
-            </footer>
+                <header>
+                  <h1>수정하기</h1>
+                </header>
+                <main>
+                  <input
+                    defaultValue={selectedPost.title}
+                    className={styles["title-input"]}
+                    onChange={handleEditModeTitleInputChange}
+                  />
+                  <select
+                    defaultValue={selectedPost.category}
+                    className={styles["category-select"]}
+                    onChange={handleEditModeCategorySelectChange}
+                  >
+                    {categoriesFilteredAll.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                  <p
+                    className={styles["selected-post-created-time"]}
+                  >{`${new Date(
+                    selectedPost.createdTime.seconds * 1000
+                  ).toLocaleDateString("ko")}`}</p>
+                  <textarea
+                    defaultValue={selectedPost.content}
+                    rows={15}
+                    className={styles["content-textarea"]}
+                    onChange={handleEditModeContentTextareaChange}
+                  />
+                </main>
+                <footer>
+                  <button onClick={handleEditModeCancelButtonClick}>
+                    취소
+                  </button>
+                  <button type="submit">완료</button>
+                </footer>
+              </form>
+            ) : (
+              <>
+                <header>
+                  <h1 className={styles["selected-post-title"]}>
+                    {selectedPost.title}
+                  </h1>
+                  <p className={styles["selected-post-category"]}>
+                    {selectedPost.category}
+                  </p>
+                  <p
+                    className={styles["selected-post-created-time"]}
+                  >{`${new Date(
+                    selectedPost.createdTime.seconds * 1000
+                  ).toLocaleDateString("ko")}`}</p>
+                </header>
+                <main>
+                  <div className={styles["selected-post-content"]}>
+                    {selectedPost.content}
+                  </div>
+                </main>
+                <footer>
+                  <button
+                    className={styles["cancel-button"]}
+                    onClick={handlePostDetailCancelButtonClick}
+                  >
+                    취소
+                  </button>
+                  <button
+                    className={styles["edit-button"]}
+                    onClick={handlePostDetailEditButtonClick}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className={styles["delete-button"]}
+                    onClick={handlePostDetailDeleteButtonClick}
+                  >
+                    삭제
+                  </button>
+                </footer>
+              </>
+            )}
           </div>
         )}
       </div>

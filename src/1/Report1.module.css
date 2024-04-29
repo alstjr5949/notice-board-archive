@@ -194,5 +194,60 @@
         padding: 6px 12px;
       }
     }
+
+    .edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      > main {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        > .title-input {
+          width: 30%;
+          border: none;
+          border-bottom: 1px solid black;
+          font-size: 24px;
+
+          &:focus {
+            outline: none;
+          }
+        }
+
+        > .category-select {
+          width: 20%;
+          padding: 4px;
+        }
+
+        .selected-post-created-time {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.5);
+        }
+
+        > .content-textarea {
+          padding: 4px;
+          resize: none;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+
+      > footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+
+        > button {
+          width: 10%;
+          border: none;
+          border-radius: 4px;
+          padding: 6px 12px;
+        }
+      }
+    }
   }
 }
