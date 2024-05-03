@@ -1,0 +1,10 @@
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  .title {
+    font-size: 45px;
+    font-weight: 800;
+  }
+}
