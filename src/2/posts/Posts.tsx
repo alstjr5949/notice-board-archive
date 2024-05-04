@@ -1,9 +1,17 @@
 import Post from "./post/Post";
 
-const Posts = () => {
+import styles from "./Posts.module.css";
+
+interface IProps {
+  onAddPostButtonClick: () => void;
+}
+
+const Posts = (props: IProps) => {
+  const { onAddPostButtonClick } = props;
+
   return (
-    <main>
-      <table>
+    <main className={styles["post-main"]}>
+      <table className={styles["post-table"]}>
         <thead>
           <tr>
             <th>No</th>
@@ -17,8 +25,13 @@ const Posts = () => {
           <Post />
         </tbody>
       </table>
-      <div>
-        <button>글쓰기</button>
+      <div className={styles["add-post-button-wrapper"]}>
+        <button
+          className={styles["add-post-button"]}
+          onClick={onAddPostButtonClick}
+        >
+          글쓰기
+        </button>
       </div>
     </main>
   );

@@ -1,0 +1,86 @@
+.create-modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+
+  width: 680px;
+  height: 880px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  padding: 30px 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 20px;
+
+  main {
+    width: 100%;
+  }
+
+  .create-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    > label {
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    > .title-input {
+      width: 100%;
+      padding-top: 10px;
+      border: none;
+      font-size: 30px;
+      outline: none;
+
+      &::placeholder {
+        font-size: 30px;
+      }
+    }
+
+    > .category-select {
+      width: 20%;
+      padding: 6px 0;
+      font-size: 18px;
+      border-radius: 8px;
+    }
+
+    > .content-textarea {
+      font-size: 20px;
+      padding: 10px 0;
+      border: none;
+      resize: none;
+      outline: none;
+
+      &::placeholder {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .--footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    > button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .cancle-button {
+      background-color: transparent;
+    }
+
+    .create-button {
+      color: white;
+      background-color: #74b9ff;
+    }
+  }
+}

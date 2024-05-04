@@ -7,4 +7,21 @@
     font-size: 45px;
     font-weight: 800;
   }
+
+  .search-input-wrapper {
+    display: flex;
+    gap: 4px;
+
+    .search-input {
+      padding: 4px 8px;
+    }
+
+    .search-button {
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      background-color: #74b9ff;
+      color: white;
+    }
+  }
 }
