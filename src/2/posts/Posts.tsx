@@ -1,13 +1,15 @@
+import { IPost } from "../types";
 import Post from "./post/Post";
 
 import styles from "./Posts.module.css";
 
 interface IProps {
+  posts: IPost[];
   onAddPostButtonClick: () => void;
 }
 
 const Posts = (props: IProps) => {
-  const { onAddPostButtonClick } = props;
+  const { posts, onAddPostButtonClick } = props;
 
   return (
     <main className={styles["post-main"]}>
@@ -22,7 +24,16 @@ const Posts = (props: IProps) => {
           </tr>
         </thead>
         <tbody>
-          <Post />
+          {posts.map(({ id, title, category, createdTime, like }, index) => (
+            <Post
+              key={id}
+              title={title}
+              category={category}
+              createdTime={createdTime}
+              like={like}
+              index={index}
+            />
+          ))}
         </tbody>
       </table>
       <div className={styles["add-post-button-wrapper"]}>
