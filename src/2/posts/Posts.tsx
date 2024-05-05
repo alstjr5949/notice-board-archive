@@ -6,10 +6,11 @@ import styles from "./Posts.module.css";
 interface IProps {
   posts: IPost[];
   onAddPostButtonClick: () => void;
+  onPostItemClick: (post: IPost) => void;
 }
 
 const Posts = (props: IProps) => {
-  const { posts, onAddPostButtonClick } = props;
+  const { posts, onAddPostButtonClick, onPostItemClick } = props;
 
   return (
     <main className={styles["post-main"]}>
@@ -24,14 +25,12 @@ const Posts = (props: IProps) => {
           </tr>
         </thead>
         <tbody>
-          {posts.map(({ id, title, category, createdTime, like }, index) => (
+          {posts.map((post, index) => (
             <Post
-              key={id}
-              title={title}
-              category={category}
-              createdTime={createdTime}
-              like={like}
+              key={post.id}
+              post={post}
               index={index}
+              onPostItemClick={onPostItemClick}
             />
           ))}
         </tbody>

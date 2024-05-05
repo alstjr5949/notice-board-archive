@@ -1,18 +1,18 @@
-import { Timestamp } from "firebase/firestore";
+import { IPost } from "../../types";
 
 interface IProps {
-  title: string;
-  category: string;
-  createdTime: Timestamp;
-  like: number;
+  post: IPost;
   index: number;
+  onPostItemClick: (post: IPost) => void;
 }
 
 const Post = (props: IProps) => {
-  const { title, category, createdTime, like, index } = props;
+  const { post, index, onPostItemClick } = props;
+
+  const { title, category, createdTime, like } = post;
 
   return (
-    <tr>
+    <tr onClick={() => onPostItemClick(post)}>
       <td>{index + 1}</td>
       <td>{category}</td>
       <td>{title}</td>

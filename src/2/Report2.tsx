@@ -8,6 +8,8 @@ import CreatePostModal from "./create-post-modal/CreatePostModal";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   limit,
   onSnapshot,
   orderBy,
@@ -16,6 +18,7 @@ import {
 import { db } from "../firebase";
 import { Unsubscribe } from "firebase/database";
 import { IForm, IPost } from "./types";
+import PostDetail from "./post-detail/PostDetail";
 
 const categories = [
   "전체",
@@ -38,6 +41,8 @@ const Report2 = () => {
     content: "",
   });
   const [posts, setPosts] = useState<IPost[]>([]);
+  const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
+  const [isEditMdoe, setIsEditMdoe] = useState(false);
 
   const handleAddPostButtonClick = () => {
     setIsCreatePost(true);
@@ -50,7 +55,6 @@ const Report2 = () => {
   const handleFormInfoChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    console.log("test");
     setPostFromInfo((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -60,11 +64,8 @@ const Report2 = () => {
   const handleCreateModalFormSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
-    console.log(postFormInfo.title, postFormInfo.content);
-
     e.preventDefault();
 
-    console.log(postFormInfo.title, postFormInfo.content);
     if (isLoading || !postFormInfo.title || !postFormInfo.content) return;
 
     try {
@@ -84,6 +85,25 @@ const Report2 = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePostItemClick = (post: IPost) => {
+    setSelectedPost(post);
+  };
+
+  const handlePostDetailModalCancelButtonClick = () => {
+    setSelectedPost(null);
+  };
+
+  const handlePostDetailModalEditButtonClick = () => {
+    setIsEditMdoe(true);
+  };
+
+  const handlePostDetailModalDeleteButtonClick = () => {
+    if (!selectedPost) return;
+
+    deleteDoc(doc(db, "secondPost", selectedPost.id));
+    setSelectedPost(null);
   };
 
   useEffect(() => {
@@ -125,7 +145,11 @@ const Report2 = () => {
     <PageTemplate>
       <div className={styles["report-wrapper"]}>
         <Header />
-        <Posts posts={posts} onAddPostButtonClick={handleAddPostButtonClick} />
+        <Posts
+          posts={posts}
+          onAddPostButtonClick={handleAddPostButtonClick}
+          onPostItemClick={handlePostItemClick}
+        />
       </div>
       {isCreatePost && (
         <CreatePostModal
@@ -133,6 +157,20 @@ const Report2 = () => {
           onCreateModalCancelButtonClick={handleCreateModalCancelButtonClick}
           onCreateModalFormSubmit={handleCreateModalFormSubmit}
           onFormInfoChange={handleFormInfoChange}
+        />
+      )}
+      {selectedPost && !isCreatePost && (
+        <PostDetail
+          selectedPost={selectedPost}
+          onPostDetailModalCancelButtonClick={
+            handlePostDetailModalCancelButtonClick
+          }
+          onPostDetailModalEditButtonClick={
+            handlePostDetailModalEditButtonClick
+          }
+          onPostDetailModalDeleteButtonClick={
+            handlePostDetailModalDeleteButtonClick
+          }
         />
       )}
     </PageTemplate>
