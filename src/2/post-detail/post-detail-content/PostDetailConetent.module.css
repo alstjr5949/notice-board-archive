@@ -1,0 +1,53 @@
+.header {
+  .title {
+    font-size: 36px;
+  }
+}
+
+.main {
+  height: 90%;
+
+  > dl {
+    > dt {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    > dd {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+  }
+
+  > .content {
+    font-size: 24px;
+  }
+}
+
+.--footer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  > button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+
+    &.cancel-button {
+      background-color: transparent;
+    }
+
+    &.edit-button {
+      background-color: #74b9ff;
+      color: white;
+    }
+
+    &.delete-button {
+      background-color: tomato;
+      color: white;
+    }
+  }
+}

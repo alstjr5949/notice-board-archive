@@ -2,7 +2,7 @@ import { ChangeEvent } from "react";
 import styles from "./CreatePostModal.module.css";
 
 interface IProps {
-  categories: string[];
+  categoriesFilteredAll: string[];
   onCreateModalCancelButtonClick: () => void;
   onCreateModalFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onFormInfoChange: (
@@ -12,13 +12,11 @@ interface IProps {
 
 const CreatePostModal = (props: IProps) => {
   const {
-    categories,
+    categoriesFilteredAll,
     onCreateModalCancelButtonClick,
     onCreateModalFormSubmit,
     onFormInfoChange,
   } = props;
-
-  const categoriesFilteredAll = categories.slice(1);
 
   return (
     <div className={styles["create-modal"]}>

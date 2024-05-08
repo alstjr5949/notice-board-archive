@@ -42,7 +42,7 @@ const Report2 = () => {
   });
   const [posts, setPosts] = useState<IPost[]>([]);
   const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
-  const [isEditMdoe, setIsEditMdoe] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleAddPostButtonClick = () => {
     setIsCreatePost(true);
@@ -96,7 +96,7 @@ const Report2 = () => {
   };
 
   const handlePostDetailModalEditButtonClick = () => {
-    setIsEditMdoe(true);
+    setIsEditMode(true);
   };
 
   const handlePostDetailModalDeleteButtonClick = () => {
@@ -141,6 +141,8 @@ const Report2 = () => {
     };
   }, []);
 
+  const categoriesFilteredAll = categories.slice(1);
+
   return (
     <PageTemplate>
       <div className={styles["report-wrapper"]}>
@@ -153,7 +155,7 @@ const Report2 = () => {
       </div>
       {isCreatePost && (
         <CreatePostModal
-          categories={categories}
+          categoriesFilteredAll={categoriesFilteredAll}
           onCreateModalCancelButtonClick={handleCreateModalCancelButtonClick}
           onCreateModalFormSubmit={handleCreateModalFormSubmit}
           onFormInfoChange={handleFormInfoChange}
@@ -161,6 +163,8 @@ const Report2 = () => {
       )}
       {selectedPost && !isCreatePost && (
         <PostDetail
+          categoriesFilteredAll={categoriesFilteredAll}
+          isEditMode={isEditMode}
           selectedPost={selectedPost}
           onPostDetailModalCancelButtonClick={
             handlePostDetailModalCancelButtonClick
@@ -171,6 +175,7 @@ const Report2 = () => {
           onPostDetailModalDeleteButtonClick={
             handlePostDetailModalDeleteButtonClick
           }
+          onFormInfoChange={handleFormInfoChange}
         />
       )}
     </PageTemplate>
