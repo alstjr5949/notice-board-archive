@@ -59,6 +59,7 @@ const EditPost = (props: IProps) => {
           id="content"
           defaultValue={content}
           className={styles["content-textarea"]}
+          rows={16}
           onChange={onFormInfoChange}
         />
       </main>
