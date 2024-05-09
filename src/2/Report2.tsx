@@ -15,6 +15,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Unsubscribe } from "firebase/database";
@@ -44,6 +45,7 @@ const Report2 = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [selectedPost, setSelectedPost] = useState<IPost | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [keyword, setKeyword] = useState("");
 
   const handleAddPostButtonClick = () => {
     setIsCreatePost(true);
@@ -137,13 +139,19 @@ const Report2 = () => {
     setIsEditMode(false);
   };
 
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+  };
+
   useEffect(() => {
     let unsubscribe: Unsubscribe | null = null;
 
     const getPosts = async () => {
       const postQuery = query(
         collection(db, "secondPost"),
-        orderBy("createdTime", "desc"),
+        where("title", ">=", keyword),
+        where("title", "<=", keyword + "\uf8ff"),
+        orderBy("title", "desc"),
         limit(50)
       );
 
@@ -170,14 +178,14 @@ const Report2 = () => {
     return () => {
       unsubscribe && unsubscribe();
     };
-  }, []);
+  }, [keyword]);
 
   const categoriesFilteredAll = categories.slice(1);
 
   return (
     <PageTemplate>
       <div className={styles["report-wrapper"]}>
-        <Header />
+        <Header onSearchInputChange={handleSearchInputChange} />
         <Posts
           posts={posts}
           onAddPostButtonClick={handleAddPostButtonClick}
