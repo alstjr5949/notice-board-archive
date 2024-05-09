@@ -10,6 +10,8 @@ interface IProps {
   onFormInfoChange: (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => void;
+  onEditFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onEditFormCancelButtonClick: () => void;
 }
 
 const EditPost = (props: IProps) => {
@@ -20,10 +22,12 @@ const EditPost = (props: IProps) => {
     createdTime,
     categoriesFilteredAll,
     onFormInfoChange,
+    onEditFormSubmit,
+    onEditFormCancelButtonClick,
   } = props;
 
   return (
-    <form className={styles["edit-post-form"]}>
+    <form className={styles["edit-post-form"]} onSubmit={onEditFormSubmit}>
       <header>
         <h2 className={styles["--title"]}>수정하기</h2>
       </header>
@@ -64,7 +68,12 @@ const EditPost = (props: IProps) => {
         />
       </main>
       <footer>
-        <button className={styles["edit-cancel-button"]}>취소</button>
+        <button
+          onClick={onEditFormCancelButtonClick}
+          className={styles["edit-cancel-button"]}
+        >
+          취소
+        </button>
         <button className={styles["edit-submit-button"]} type="submit">
           완료
         </button>

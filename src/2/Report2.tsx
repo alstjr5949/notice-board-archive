@@ -14,6 +14,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Unsubscribe } from "firebase/database";
@@ -106,6 +107,36 @@ const Report2 = () => {
     setSelectedPost(null);
   };
 
+  const handleEditFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (isLoading || !selectedPost) return;
+
+    try {
+      setIsLoading(true);
+
+      await updateDoc(doc(db, "secondPost", selectedPost.id), {
+        title: postFormInfo.title ? postFormInfo.title : selectedPost.title,
+        category: postFormInfo.category
+          ? postFormInfo.category
+          : selectedPost.category,
+        content: postFormInfo.content
+          ? postFormInfo.content
+          : selectedPost.content,
+      });
+
+      setSelectedPost(null);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditFormCancelButtonClick = () => {
+    setIsEditMode(false);
+  };
+
   useEffect(() => {
     let unsubscribe: Unsubscribe | null = null;
 
@@ -176,6 +207,8 @@ const Report2 = () => {
             handlePostDetailModalDeleteButtonClick
           }
           onFormInfoChange={handleFormInfoChange}
+          onEditFormSubmit={handleEditFormSubmit}
+          onEditFormCancelButtonClick={handleEditFormCancelButtonClick}
         />
       )}
     </PageTemplate>

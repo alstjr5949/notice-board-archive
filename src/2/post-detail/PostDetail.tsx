@@ -12,9 +12,11 @@ interface IProps {
   onPostDetailModalCancelButtonClick: () => void;
   onPostDetailModalEditButtonClick: () => void;
   onPostDetailModalDeleteButtonClick: () => void;
+  onEditFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onFormInfoChange: (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => void;
+  onEditFormCancelButtonClick: () => void;
 }
 
 const PostDetail = (props: IProps) => {
@@ -26,6 +28,8 @@ const PostDetail = (props: IProps) => {
     onPostDetailModalEditButtonClick,
     onPostDetailModalDeleteButtonClick,
     onFormInfoChange,
+    onEditFormSubmit,
+    onEditFormCancelButtonClick,
   } = props;
 
   return (
@@ -40,6 +44,8 @@ const PostDetail = (props: IProps) => {
           content={content}
           categoriesFilteredAll={categoriesFilteredAll}
           onFormInfoChange={onFormInfoChange}
+          onEditFormSubmit={onEditFormSubmit}
+          onEditFormCancelButtonClick={onEditFormCancelButtonClick}
         />
       ) : (
         <PostDetailContent
